@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { reactive, ref } from "vue";
-import { Run } from "../../wailsjs/go/main/App.js";
+import { Run } from '../../wailsjs/go/queries/Query.js';
 
 import Textarea from "primevue/textarea";
 import Button from "primevue/button";

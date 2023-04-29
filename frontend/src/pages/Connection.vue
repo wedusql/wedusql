@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from "vue";
-import { Connect } from "../../wailsjs/go/main/App.js";
+import { SaveConnection } from "../../wailsjs/go/queries/Query.js";
 import { useRouter } from "vue-router";
 
 import InputText from "primevue/inputtext";
@@ -22,7 +22,7 @@ const toast = useToast();
 
 const connect = async () => {
   try {
-    await Connect(connectionType.value, dsn.value);
+    await SaveConnection(connectionType.value, dsn.value);
     toast.add({ severity: "success", summary: "Connected", life: 3000 });
     router.push("/query");
   } catch (err: any) {

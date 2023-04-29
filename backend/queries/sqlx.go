@@ -1,47 +1,23 @@
-package main
+package queries
 
 import (
-	"context"
 	"errors"
 
-	_ "github.com/go-mysql-org/go-mysql/driver"
-	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
 )
-
-var db *sqlx.DB
-
-type App struct {
-	ctx context.Context
-}
-
-func NewApp() *App {
-	return &App{}
-}
-
-func (a *App) startup(ctx context.Context) {
-	a.ctx = ctx
-}
-
-func (a *App) Connect(connectionType string, dsnRaw string) error {
-	d, err := sqlx.Connect(connectionType, dsnRaw)
-	if err != nil {
-		return err
-	}
-
-	db = d
-	return nil
-}
 
 type resultRun struct {
 	Columns []string
 	Rows    []map[string]any
 }
 
-func (a *App) Run(query string) (*resultRun, error) {
+func (q *Query) runSqlxQuery(query string) (*resultRun, error) {
+
 	if query == "" {
 		return nil, errors.New("can't execute empty query")
 	}
+
+	db := q.connection.GetConnection().(*sqlx.DB)
 
 	rows, err := db.Queryx(query)
 	if err != nil {
@@ -74,4 +50,5 @@ func (a *App) Run(query string) (*resultRun, error) {
 	}
 
 	return &resultRun{columns, result}, nil
+
 }
