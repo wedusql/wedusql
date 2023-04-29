@@ -1,11 +1,17 @@
 <script lang="ts" setup>
 import { reactive, ref } from "vue";
-import { notification } from 'ant-design-vue';
-import { Run } from '../../wailsjs/go/main/App.js';
+import { Run } from "../../wailsjs/go/main/App.js";
 
-const query = ref('');
+import Textarea from "primevue/textarea";
+import Button from "primevue/button";
+import { useToast } from "primevue/usetoast";
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
+
+const query = ref("");
 let queryResult = reactive({} as any);
 
+const toast = useToast();
 const run = async () => {
   try {
     const result = await Run(query.value);
@@ -19,9 +25,11 @@ const run = async () => {
     queryResult.Rows = result.Rows;
     console.log(queryResult);
   } catch (err: any) {
-    notification.open({
-      message: "Query execution failed",
-      description: err,
+    toast.add({
+      severity: "error",
+      summary: "Query execution failed",
+      detail: err,
+      life: 3000,
     });
   }
 };
@@ -29,18 +37,20 @@ const run = async () => {
 
 <template>
   <div>
-    <a-row>
-      <a-col :span="20">
-        <a-textarea :rows="5" v-model:value="query"></a-textarea>
-      </a-col>
-      <a-col>
-        <a-button @click="run()">Run</a-button>
-      </a-col>
-    </a-row>
+    <div class="flex">
+      <Textarea :rows="5" v-model="query" class="w-10" />
+      <Button @click="run()" label="Run" />
+    </div>
+  </div>
 
-    <a-table :columns="queryResult.Columns || []" :dataSource="queryResult.Rows || []" :pagination="false">
-
-    </a-table>
-
+  <div>
+    <DataTable :value="queryResult.Rows || []">
+      <Column
+        v-for="c in queryResult.Columns || []"
+        :key="c.key"
+        :field="c.title"
+        :header="c.title"
+      />
+    </DataTable>
   </div>
 </template>

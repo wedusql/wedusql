@@ -1,31 +1,36 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import { Connect } from "../../wailsjs/go/main/App.js";
-import { notification, message } from "ant-design-vue";
 import { useRouter } from "vue-router";
 
-const router = useRouter();
-const connectionType = ref('mysql');
-const dsn = ref('root:123123@localhost:3306/mysql');
+import InputText from "primevue/inputtext";
+import Button from "primevue/button";
+import Dropdown from "primevue/dropdown";
+import { useToast } from "primevue/usetoast";
 
-const filterOption = (input: string, option: any) => {
-  return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-};
+const router = useRouter();
+const connectionType = ref("mysql");
+const dsn = ref("root:123123@localhost:3306/mysql");
+
 const options = [
   { value: "pgx", label: "PostgreSQL" },
-  { value: "mysql", label: "MySQL / MariaDB" },
+  { value: "mysql", label: "MySQL/MariaDB" },
   { value: "sqlite3_extended", label: "SQLite" },
 ];
+
+const toast = useToast();
 
 const connect = async () => {
   try {
     await Connect(connectionType.value, dsn.value);
-    message.success("connected");
+    toast.add({ severity: "success", summary: "Connected", life: 3000 });
     router.push("/query");
   } catch (err: any) {
-    notification.open({
-      message: "Create connection failed",
-      description: err,
+    toast.add({
+      severity: "error",
+      summary: "Create connection failed",
+      detail: err,
+      life: 5000,
     });
   }
 };
@@ -33,17 +38,20 @@ const connect = async () => {
 
 <template>
   <div class="flex p-3">
-    <a-input-group compact>
-      <a-select
-        v-model:value="connectionType"
-        show-search
-        :options="options"
-        style="width: 20%"
-        :filter-option="filterOption"
-        placeholder="Connection Type"
-      />
-      <a-input v-model:value="dsn" style="width: 60%" placeholder="Connection String" />
-      <a-button type="primary" @click="connect()">Submit</a-button>
-    </a-input-group>
+    <Dropdown
+      v-model="connectionType"
+      :options="options"
+      filter
+      option-label="label"
+      option-value="value"
+      class="w-2"
+    />
+    <InputText
+      type="text"
+      v-model="dsn"
+      placeholder="Connection String"
+      class="w-8"
+    />
+    <Button @click="connect()" label="Connect" class="w-2" />
   </div>
 </template>

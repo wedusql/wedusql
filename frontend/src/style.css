@@ -1,4 +1,13 @@
 body {
     margin: 0;
-    zoom: .9;
+}
+
+body,
+.p-toast {
+    zoom: .85;
+}
+
+.p-datatable .p-datatable-tbody > tr > td,
+.p-datatable .p-datatable-thead > tr > th {
+    padding: .5rem  !important;
 }
