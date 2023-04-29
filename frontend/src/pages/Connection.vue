@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from "vue";
-import { Connect } from "../../wailsjs/go/main/App.js";
+import { SaveConnection } from "../../wailsjs/go/queries/Query.js";
 import { notification, message } from "ant-design-vue";
 import { useRouter } from "vue-router";
 
@@ -19,7 +19,7 @@ const options = [
 
 const connect = async () => {
   try {
-    await Connect(connectionType.value, dsn.value);
+    await SaveConnection(connectionType.value, dsn.value);
     message.success("connected");
     router.push("/query");
   } catch (err: any) {

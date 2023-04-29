@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { reactive, ref } from "vue";
 import { notification } from 'ant-design-vue';
-import { Run } from '../../wailsjs/go/main/App.js';
+import { Run } from '../../wailsjs/go/queries/Query.js';
 
 const query = ref('');
 let queryResult = reactive({} as any);
