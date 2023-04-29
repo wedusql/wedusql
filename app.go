@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	_ "github.com/go-mysql-org/go-mysql/driver"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -62,6 +61,13 @@ func (a *App) Run(query string) (*resultRun, error) {
 		err := rows.MapScan(r)
 		if err != nil {
 			return nil, err
+		}
+
+		for k, v := range r {
+			switch v.(type) {
+			case []uint8:
+				r[k] = string(v.([]byte))
+			}
 		}
 
 		result = append(result, r)
