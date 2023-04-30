@@ -1,30 +1,57 @@
 <script lang="ts" setup>
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref, watchEffect } from "vue";
 import Tree, { TreeNode } from "primevue/tree";
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
 
-import { Run } from '../../wailsjs/go/queries/Query.js';
+import { Run } from "../../wailsjs/go/queries/Query.js";
 
 const tables = ref([] as TreeNode[]);
+const treeSelect = ref({});
+const queryResult = reactive({} as any);
 
 const getAllTables = async () => {
-  const qTables = await Run('SHOW TABLES');
+  const qTables = await Run("SHOW TABLES");
   tables.value = [
     {
       key: "0",
       label: "Tables",
-      children: qTables.Rows.map((t: any, i: any) => {
+      children: qTables.Rows.map((t: any) => {
         return {
-          key: `tables-${i}`,
+          key: `tables-${t.Tables_in_mysql}`,
           label: t.Tables_in_mysql,
         };
       }),
     },
   ];
-  console.log(qTables.Rows);
-}
+};
+
+const getAllTableRows = async (tableName: string) => {
+  const result = await Run(`SELECT * FROM ${tableName}`);
+  queryResult.Columns = (result.Columns || []).map((c: string, i: number) => {
+    return {
+      title: c,
+      dataIndex: c,
+      key: c,
+    };
+  });
+  queryResult.Rows = result.Rows;
+};
+
 
 onMounted(() => {
   getAllTables();
+});
+
+watchEffect(() => {
+  const tableKey = Object.keys(treeSelect.value)[0];
+  const tableNameFromKey = tableKey?.split('tables-');
+  if (!tableNameFromKey || tableNameFromKey.length < 2) {
+    return;
+  }
+
+  const tableName = tableNameFromKey[1];
+  getAllTableRows(tableName);
 });
 
 </script>
@@ -32,9 +59,23 @@ onMounted(() => {
 <template>
   <div class="flex">
     <div class="w-3">
-      <Tree :value="tables" class="w-full h-screen overflow-x-auto" />
+      <Tree
+        :value="tables"
+        class="w-full h-screen overflow-x-auto"
+        selectionMode="single"
+        v-model:selectionKeys="treeSelect"
+      />
     </div>
 
-    <div>asdasd</div>
+    <div>
+      <DataTable :value="queryResult.Rows || []">
+      <Column
+        v-for="c in queryResult.Columns || []"
+        :key="c.key"
+        :field="c.title"
+        :header="c.title"
+      />
+    </DataTable>
+    </div>
   </div>
 </template>
