@@ -6,6 +6,10 @@ const routes = [
     component: () => import('./pages/Connection.vue'),
   },
   {
+    path: '/home',
+    component: () => import('./pages/Home.vue'),
+  },
+  {
     path: '/query',
     component: () => import('./pages/Query.vue'),
   },

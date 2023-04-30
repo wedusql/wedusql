@@ -23,7 +23,7 @@ func (q *Query) TestConnection(connType, dsn string) (bool, error) {
 
 func (q *Query) Run(query string) (*resultRun, error) {
 
-	connType := q.connection.GetConnectionType()
+	connType := connections.C.GetConnectionType()
 	if connType == "mysql" || connType == "pgx" {
 		return q.runSqlxQuery(query)
 	}

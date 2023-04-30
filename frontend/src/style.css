@@ -11,3 +11,7 @@ body,
 .p-datatable .p-datatable-thead > tr > th {
     padding: .5rem  !important;
 }
+
+.p-tree .p-tree-container .p-treenode .p-treenode-content {
+    padding: 0 !important;
+}

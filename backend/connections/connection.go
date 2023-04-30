@@ -6,6 +6,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+var C *Connection
+
 type Connection struct {
 	// _type is a connection type, e.g. mysql, pgx, etc.
 	_type string
@@ -20,13 +22,16 @@ func (c *Connection) Connect(connectionType string, dsnRaw string) error {
 
 	if connectionType == "" {
 		return nil
-	} else if connectionType == "mysql" || connectionType == "pgx" {
+	}
+
+	if connectionType == "mysql" || connectionType == "pgx" {
 		d, err := sqlx.Connect(connectionType, dsnRaw)
 		if err != nil {
 			return err
 		}
 		c.db = d
 		c._type = connectionType
+		C = c
 	}
 
 	return nil

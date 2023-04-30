@@ -2,6 +2,7 @@ package queries
 
 import (
 	"errors"
+	"wedusql/backend/connections"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -17,7 +18,7 @@ func (q *Query) runSqlxQuery(query string) (*resultRun, error) {
 		return nil, errors.New("can't execute empty query")
 	}
 
-	db := q.connection.GetConnection().(*sqlx.DB)
+	db := connections.C.GetConnection().(*sqlx.DB)
 
 	rows, err := db.Queryx(query)
 	if err != nil {

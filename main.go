@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"wedusql/backend/app"
+	"wedusql/backend/connections"
 	"wedusql/backend/queries"
 
 	"github.com/wailsapp/wails/v2"
@@ -17,10 +18,17 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
+func bind(app *app.App) []any {
+	return []any{
+		app,
+		queries.NewQuery(),
+		connections.NewConnection(),
+	}
+}
+
 func main() {
 	// Create an instance of the app structure
 	app := app.NewApp()
-	_queries := queries.NewQuery()
 
 	// Create application with options
 	err := wails.Run(&options.App{
@@ -35,10 +43,7 @@ func main() {
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		OnStartup:        app.Startup,
 		Menu:             app.MakeMenu(),
-		Bind: []interface{}{
-			app,
-			_queries,
-		},
+		Bind:             bind(app),
 		Debug: options.Debug{
 			OpenInspectorOnStartup: true,
 		},
