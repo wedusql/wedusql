@@ -9,6 +9,8 @@ export function Disconnect():Promise<void>;
 
 export function GetConnection():Promise<any>;
 
+export function GetConnectionInfo():Promise<any>;
+
 export function GetConnectionType():Promise<string>;
 
 export function TestConnection(arg1:string,arg2:string):Promise<boolean>;

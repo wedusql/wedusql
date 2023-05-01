@@ -7,13 +7,20 @@ import Toolbar from "primevue/toolbar";
 import Button from "primevue/button";
 
 import { Run } from "../../wailsjs/go/queries/Query.js";
-import { Disconnect } from "../../wailsjs/go/connections/Connection.js";
+import { Disconnect, GetConnectionInfo } from "../../wailsjs/go/connections/Connection.js";
 import { useRouter } from "vue-router";
 
+const connectionInfo = ref({} as any);
 const tables = ref([] as TreeNode[]);
 const treeSelect = ref({});
+const activeTable = ref('');
 const queryResult = reactive({} as any);
 const router = useRouter();
+
+const getConnectionDsn = async () => {
+  const ci = await GetConnectionInfo();
+  connectionInfo.value = ci;
+};
 
 const getAllTables = async () => {
   const qTables = await Run("SHOW TABLES");
@@ -48,7 +55,11 @@ const disconnect = async() => {
   router.push('/');
 };
 
+const setActiveTable = () => {
+};
+
 onMounted(() => {
+  getConnectionDsn();
   getAllTables();
 });
 
@@ -59,8 +70,10 @@ watchEffect(() => {
     return;
   }
 
-  const tableName = tableNameFromKey[1];
-  getAllTableRows(tableName);
+  activeTable.value = tableNameFromKey[1];
+  if (!!activeTable.value) {
+    getAllTableRows(activeTable.value);
+  }
 });
 </script>
 
@@ -96,4 +109,22 @@ watchEffect(() => {
       </DataTable>
     </div>
   </div>
+
+  <div class="statusbar p-1">
+  {{ connectionInfo.User }} @ {{ connectionInfo.Host }} / {{ connectionInfo.Database }}
+  <span v-if="!!activeTable">
+    / {{ activeTable }}
+  </span>
+  </div>
 </template>
+
+<style scoped>
+.statusbar {
+    position: fixed;
+    z-index: 100; 
+    bottom: 0; 
+    left: 0;
+    width: 100%;
+    background: white;
+}
+</style>

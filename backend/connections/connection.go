@@ -1,6 +1,10 @@
 package connections
 
 import (
+	"fmt"
+	"net/url"
+	"strings"
+
 	_ "github.com/go-mysql-org/go-mysql/driver"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
@@ -11,6 +15,7 @@ var C *Connection
 type Connection struct {
 	// _type is a connection type, e.g. mysql, pgx, etc.
 	_type string
+	dsn   string
 	db    *sqlx.DB
 }
 
@@ -23,6 +28,8 @@ func (c *Connection) Connect(connectionType string, dsnRaw string) error {
 	if connectionType == "" {
 		return nil
 	}
+
+	c.dsn = dsnRaw
 
 	if connectionType == "mysql" || connectionType == "pgx" {
 		d, err := sqlx.Connect(connectionType, dsnRaw)
@@ -78,5 +85,36 @@ func (c *Connection) GetConnection() any {
 	if c._type == "mysql" || c._type == "pgx" {
 		return c.db
 	}
+
 	return nil
+}
+
+type connectionInfo struct {
+	Driver   string
+	User     string
+	Host     string
+	Database string
+}
+
+func (c *Connection) GetConnectionInfo() (*connectionInfo, error) {
+	rawDsn := c.dsn
+	if c._type == "mysql" {
+		rawDsn = "mysql://" + rawDsn
+	}
+
+	dsn, err := url.Parse(rawDsn)
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println("mantap")
+
+	ci := &connectionInfo{
+		Driver:   c._type,
+		User:     dsn.User.Username(),
+		Host:     dsn.Host,
+		Database: strings.ReplaceAll(dsn.Path, "/", ""),
+	}
+
+	return ci, nil
 }

@@ -1,17 +1,22 @@
+* {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
 body {
-    margin: 0;
+  margin: 0;
 }
 
 body,
 .p-toast {
-    zoom: .85;
+  zoom: 0.85;
 }
 
 .p-datatable .p-datatable-tbody > tr > td,
 .p-datatable .p-datatable-thead > tr > th {
-    padding: .5rem  !important;
+  padding: 0.5rem !important;
 }
 
 .p-tree .p-tree-container .p-treenode .p-treenode-content {
-    padding: 0 !important;
+  padding: 0 !important;
 }

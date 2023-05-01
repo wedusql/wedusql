@@ -18,6 +18,10 @@ export function GetConnection() {
   return window['go']['connections']['Connection']['GetConnection']();
 }
 
+export function GetConnectionInfo() {
+  return window['go']['connections']['Connection']['GetConnectionInfo']();
+}
+
 export function GetConnectionType() {
   return window['go']['connections']['Connection']['GetConnectionType']();
 }
