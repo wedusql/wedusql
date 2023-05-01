@@ -24,7 +24,9 @@ const getAllTableRows = async (tableName: string) => {
 };
 
 watchEffect(() => {
-  getAllTableRows(props.tableName);
+  if (!!props.tableName) {
+    getAllTableRows(props.tableName);
+  }
 });
 </script>
 
