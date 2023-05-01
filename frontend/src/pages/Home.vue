@@ -1,21 +1,23 @@
 <script lang="ts" setup>
 import { onMounted, reactive, ref, watchEffect } from "vue";
 import Tree, { TreeNode } from "primevue/tree";
-import DataTable from "primevue/datatable";
-import Column from "primevue/column";
 import Toolbar from "primevue/toolbar";
 import Button from "primevue/button";
+import TabView from 'primevue/tabview';
+import TabPanel from 'primevue/tabpanel';
 
 import { Run } from "../../wailsjs/go/queries/Query.js";
 import { Disconnect, GetConnectionInfo } from "../../wailsjs/go/connections/Connection.js";
 import { useRouter } from "vue-router";
+import HomeData from "../components/HomeData.vue";
+import HomeColumns from "../components/HomeColumns.vue";
 
 const connectionInfo = ref({} as any);
 const tables = ref([] as TreeNode[]);
 const treeSelect = ref({});
 const activeTable = ref('');
-const queryResult = reactive({} as any);
 const router = useRouter();
+const activeTab = ref(0);
 
 const getConnectionDsn = async () => {
   const ci = await GetConnectionInfo();
@@ -30,32 +32,17 @@ const getAllTables = async () => {
       label: "Tables",
       children: qTables.Rows.map((t: any) => {
         return {
-          key: `tables-${t.Tables_in_mysql}`,
-          label: t.Tables_in_mysql,
+          key: `tables-${t[Object.keys(t)[0]]}`,
+          label: t[Object.keys(t)[0]],
         };
       }),
     },
   ];
 };
 
-const getAllTableRows = async (tableName: string) => {
-  const result = await Run(`SELECT * FROM ${tableName}`);
-  queryResult.Columns = (result.Columns || []).map((c: string, i: number) => {
-    return {
-      title: c,
-      dataIndex: c,
-      key: c,
-    };
-  });
-  queryResult.Rows = result.Rows;
-};
-
 const disconnect = async() => {
   await Disconnect();
   router.push('/');
-};
-
-const setActiveTable = () => {
 };
 
 onMounted(() => {
@@ -71,9 +58,6 @@ watchEffect(() => {
   }
 
   activeTable.value = tableNameFromKey[1];
-  if (!!activeTable.value) {
-    getAllTableRows(activeTable.value);
-  }
 });
 </script>
 
@@ -99,14 +83,17 @@ watchEffect(() => {
     </div>
 
     <div>
-      <DataTable :value="queryResult.Rows || []">
-        <Column
-          v-for="c in queryResult.Columns || []"
-          :key="c.key"
-          :field="c.title"
-          :header="c.title"
-        />
-      </DataTable>
+      <div class="p-inputgroup flex-1">
+        <Button label="Data" :outlined="activeTab != 0" @click="activeTab = 0" />
+        <Button label="Columns" :outlined="activeTab != 1" @click="activeTab = 1" />
+        <Button label="Indexes" :outlined="activeTab != 2" @click="activeTab = 2" />
+      </div>
+
+      <div>
+        <HomeData :tableName="activeTable" v-if="activeTab == 0" />
+        <HomeColumns :tableName="activeTable" v-if="activeTab == 1" />
+      </div>
+
     </div>
   </div>
 

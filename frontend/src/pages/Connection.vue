@@ -10,7 +10,7 @@ import { useToast } from "primevue/usetoast";
 
 const router = useRouter();
 const connectionType = ref("mysql");
-const dsn = ref("root:123123@localhost:3306/mysql");
+const dsn = ref("root:123123@localhost:3306/company");
 
 const options = [
   { value: "pgx", label: "PostgreSQL" },

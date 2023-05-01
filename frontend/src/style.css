@@ -3,6 +3,10 @@
     Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
+html {
+  font-size: .93rem;
+}
+
 body {
   margin: 0;
 }
