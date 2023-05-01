@@ -10,6 +10,10 @@ export function Connect(arg1, arg2) {
   return window['go']['connections']['Connection']['Connect'](arg1, arg2);
 }
 
+export function Disconnect() {
+  return window['go']['connections']['Connection']['Disconnect']();
+}
+
 export function GetConnection() {
   return window['go']['connections']['Connection']['GetConnection']();
 }

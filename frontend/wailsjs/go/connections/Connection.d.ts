@@ -5,6 +5,8 @@ export function Close():Promise<void>;
 
 export function Connect(arg1:string,arg2:string):Promise<void>;
 
+export function Disconnect():Promise<void>;
+
 export function GetConnection():Promise<any>;
 
 export function GetConnectionType():Promise<string>;

@@ -37,6 +37,12 @@ func (c *Connection) Connect(connectionType string, dsnRaw string) error {
 	return nil
 }
 
+func (c *Connection) Disconnect() {
+	C = nil
+	c.db = nil
+	c._type = ""
+}
+
 func (c *Connection) TestConnection(connectionType string, dsnRaw string) (bool, error) {
 	if connectionType == "" {
 		return false, nil
