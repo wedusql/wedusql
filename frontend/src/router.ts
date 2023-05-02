@@ -12,7 +12,10 @@ const routes = [
   {
     path: '/query',
     component: () => import('./pages/Query.vue'),
-  },
+  },{
+    path: '/connections',
+    component: () => import('./pages/ListConnection.vue'),
+  }
 ] as RouteRecordRaw[];
 
 export const router = createRouter({

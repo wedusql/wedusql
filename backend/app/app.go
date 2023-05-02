@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"fmt"
 	"runtime"
 
 	_ "github.com/go-mysql-org/go-mysql/driver"
@@ -10,6 +9,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/wailsapp/wails/v2/pkg/menu"
 	"github.com/wailsapp/wails/v2/pkg/menu/keys"
+	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 var db *sqlx.DB
@@ -36,10 +36,14 @@ func (a *App) MakeMenu() *menu.Menu {
 	}
 
 	connectionMenu := _menu.AddSubmenu("Database")
-	connectionMenu.AddText("Connections", keys.CmdOrCtrl("n"), func(_ *menu.CallbackData) {
-		fmt.Println("Connections")
+	connectionMenu.AddText("New Connections", keys.CmdOrCtrl("n"), func(_ *menu.CallbackData) {
+		wailsRuntime.EventsEmit(a.ctx, "LIST_CONNECTIONS")
 	})
+
 	connectionMenu.AddSeparator()
+	connectionMenu.AddText("Refresh", keys.CmdOrCtrl("r"), func(_ *menu.CallbackData) {
+		wailsRuntime.EventsEmit(a.ctx, "REFRESH_CONNECTION")
+	})
 
 	return _menu
 }
